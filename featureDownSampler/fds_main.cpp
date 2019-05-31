@@ -19,7 +19,7 @@ void printHelp() {
 int main(int argc, char* argv[]) {
 
     // Collect & Parse Argument
-    if(argc < 1) {
+    if(argc <= 1) {
         std::cerr << "ERROR: arguments needed" << std::endl;
         printHelp();
         return 1;
