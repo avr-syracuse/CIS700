@@ -28,21 +28,22 @@ void vote() {
     while(!inputVector[0]->eof()) {
 
         // list of votes
-        std::map<std::string, float> votes;
-        std::map<std::string, float>::iterator voteIterator;
+        std::map<int32_t, float> votes;
+        std::map<int32_t, float>::iterator voteIterator;
 
         for (int index = 0; index < fileCount; index++) {
             std::string line;
             getline(*inputVector[index], line);
 
             // ignore the header
-            if (rowIndex != 0) {
+            if (rowIndex != 0 && line.length() >= 1) {
 
                 // Read in information from csv file
                 // CSV file format must be: classification, weight, <other stuff>
                 std::string strLabel;
                 std::stringstream ssline(line);
                 getline(ssline, strLabel, ','); // first value label;
+                int32_t classLable = std::stoi(strLabel);
 
                 std::string strVoteWeight;
                 float voteWeight = 1.0 / (float) fileCount; // average;
@@ -52,12 +53,12 @@ void vote() {
                 }
 
                 // Add info to vote map
-                voteIterator = votes.find(strLabel);
+                voteIterator = votes.find(classLable);
                 if (voteIterator == votes.end()) {    // New class!
-                    std::cout << "new vote" << strLabel << std::endl;
-                    votes[strLabel] = voteWeight;
+                    std::cout << "new vote" << classLable << std::endl;
+                    votes[classLable] = voteWeight;
                 } else {    // existing class
-                    votes[strLabel] += voteWeight;
+                    votes[classLable] += voteWeight;
                 }
 
             }
@@ -67,8 +68,8 @@ void vote() {
 
         // Write as vote results
         // Find label with highest vote count
-        if (rowIndex != 0) {
-            std::string maxLabel;
+        if (rowIndex != 0 && votes.size() > 0) {
+            uint32_t maxLabel;
             float maxVoteWeight = 0.0;
             for (auto vote : votes) {
                 if (maxVoteWeight < vote.second) {
